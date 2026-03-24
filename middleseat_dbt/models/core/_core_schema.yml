@@ -1,4 +1,4 @@
-version: 2
+version: 2.01
 
 models:
   - name: core__donations

@@ -1,3 +1,11 @@
+/*
+This macro dynamically queries the warehouse metadata to find tables that match a given schema pattern and model name, while allowing specific schemas or models to be included or excluded.
+
+It retrieves those tables, converts them into dbt relation objects, and returns them as a list for use in downstream operations such as unioning tables across schemas.
+
+If no matching tables are found, it returns an empty list.
+*/
+
 {%- macro get_precore_tables(schema_pattern, model_name, schema_exclude=[], model_include=[], model_exclude=[]) -%}
 
 {%- if execute -%}

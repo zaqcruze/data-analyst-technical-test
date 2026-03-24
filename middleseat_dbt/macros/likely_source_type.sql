@@ -3,6 +3,7 @@
 
     CASE 
         WHEN {{ source_type }} IS NOT NULL THEN {{ source_type }}
+        --Trust input data as highest priority for defining source_type
 
         {% for field in search_fields %}
             WHEN LEFT(lower(replace( {{ field }},'_','-')), 2) = 'em' THEN 'Email'

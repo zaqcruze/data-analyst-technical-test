@@ -2,9 +2,50 @@ version: 2
 
 models:
   - name: core__donations
+    description: "Unified donations table combining ActBlue and Shopify data for reporting on donation activity, donor behavior, and recurring giving."
+
     columns:
       - name: wdl_transaction_id
-        description: ""
+        description: "Unique identifier for each donation transaction across all platforms."
         data_tests:
           - unique
           - not_null
+
+      - name: wdl_client_code
+        description: "Client identifier used to group donations by campaign or organization."
+
+      - name: transaction_id
+        description: "Platform-specific transaction ID (e.g., ActBlue lineitem_id or Shopify order_id)."
+
+      - name: amount
+        description: "Total donation amount before refunds."
+
+      - name: post_refund_amount
+        description: "Net donation amount after any refunds are applied."
+
+      - name: et_created_at
+        description: "Timestamp of the donation in Eastern Time."
+
+      - name: et_created_month_trunc
+        description: "First day of the month in which the donation occurred, used for time-based aggregation."
+
+      - name: is_recurring
+        description: "Indicates whether the donation is part of a recurring contribution."
+
+      - name: recurring_type
+        description: "Categorizes the donation as New, Existing, or One-time based on recurring status."
+
+      - name: is_refunded
+        description: "Indicates whether the donation was refunded."
+
+      - name: source_type
+        description: "Mapped source category for the donation based on predefined source mappings."
+
+      - name: likely_source_type
+        description: "Inferred donation source based on available data such as refcode and form name when an explicit source is not provided."
+
+      - name: refcode
+        description: "Tracking code used to attribute the source or campaign associated with the donation."
+
+      - name: form_name
+        description: "Name of the donation form used, often indicating campaign or channel context."

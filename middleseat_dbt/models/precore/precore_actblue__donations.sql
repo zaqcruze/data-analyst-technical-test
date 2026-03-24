@@ -87,6 +87,7 @@ SELECT
             ELSE sources.source_type
         END AS source_type,
     CASE WHEN finance_exclusions.order_number IS NOT NULL THEN 'Finance'
+    --The macro expands here and its logic is evaluated row by row for non-finance-excluded records.
             ELSE {{ likely_source_type('sources.source_type', 'donations.refcode', 'donations.form_name') }}
         END AS likely_source_type,
     donations.refcode,

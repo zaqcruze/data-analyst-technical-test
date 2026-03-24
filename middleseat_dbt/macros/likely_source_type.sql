@@ -1,9 +1,18 @@
+/*
+This macro returns a CASE statement that assigns a standardized likely_source_type for each donation.
+
+It prioritizes an existing source_type (e.g., from sources.source_type) when available. If not present, it infers a source by applying pattern matching to refcode and form_name, checking refcode first and then form_name.
+
+The matching logic identifies common channels such as Email, Ads, and Texting, with an additional specific check for ActBlue donor dashboard contributions.
+
+If no conditions are met, the result defaults to NULL.
+*/
+
 {% macro likely_source_type(source_type, refcode=none, form_name=none) -%}
 {% set search_fields = [refcode, form_name] %}
 
     CASE 
         WHEN {{ source_type }} IS NOT NULL THEN {{ source_type }}
-        --Trust input data as highest priority for defining source_type
 
         {% for field in search_fields %}
             WHEN LEFT(lower(replace( {{ field }},'_','-')), 2) = 'em' THEN 'Email'

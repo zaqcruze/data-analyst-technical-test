@@ -1,7 +1,8 @@
 {%- set schema_pattern = 'dbt_%' -%}
 {%- set precore_table_name = 'precore_shopify__orders_v2' -%}
 {%- set shopify_tables = get_precore_tables(schema_pattern, precore_table_name, schema_exclude=['dbt_precore'], model_exclude=['precore_shopify__orders_v1']) -%}
-
+-- Dynamically retrieves all relevant Shopify precore order tables across schemas, excluding deprecated models and internal schemas, for use in downstream unioning
+    
 {{
     config(
         dist='wdl_transaction_id',

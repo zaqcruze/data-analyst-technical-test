@@ -1,5 +1,9 @@
 /*
+This model standardizes ActBlue donation records into a cleaner precore donations table for downstream reporting and unioning.
 
+It enriches raw donation data with client codes, source mappings, and finance exclusions, normalizes key timestamps, and assigns both explicit and inferred source classifications.
+
+This model serves as the ActBlue-specific input to the shared core donations model.
 */
 
 {{
@@ -47,6 +51,7 @@ SELECT
     donations.order_number,
     donations.utc_created_at,
     {{ normalize_timestamp('donations.utc_created_at', 'UTC', 'US/Eastern') }} AS et_created_at,
+    -- Convert UTC timestamp to Eastern Time and derive year/month fields to support time-based aggregation in downstream reporting
     EXTRACT(YEAR from donations.et_created_at) AS et_created_year,
     EXTRACT(MONTH from donations.et_created_at) AS et_created_month,
     CAST(
@@ -75,6 +80,7 @@ SELECT
     donations.is_recurring_cancelled,
     donations.utc_recurring_cancelled_at,
     {{ normalize_timestamp('donations.utc_recurring_cancelled_at', 'UTC', 'US/Eastern') }} AS et_recurring_cancelled_at,
+    -- Standardize recurring donation fields and create a readable recurring_type that distinguishes new recurring gifts, existing recurring gifts, and one-time donations.
     CASE
         WHEN donations.is_recurring = 1 AND donations.recurring_gift_seq = 0 THEN 'New'
         WHEN donations.is_recurring = 1 THEN 'Existing'
@@ -91,7 +97,7 @@ SELECT
             ELSE sources.source_type
         END AS source_type,
     CASE WHEN finance_exclusions.order_number IS NOT NULL THEN 'Finance'
-     -- Use the mapped source_type when available unless the donation is flagged as Finance.
+    -- Assigns likely_source_type using the macro, unless the donation is flagged as Finance.
             ELSE {{ likely_source_type('sources.source_type', 'donations.refcode', 'donations.form_name') }}
         END AS likely_source_type,
     donations.refcode,

@@ -1,3 +1,11 @@
+/*
+This model combines standardized donation data from ActBlue and Shopify into a shared core donations table for downstream reporting.
+
+It aligns the two sources to a common schema, fills platform-specific gaps with NULLs or default values where needed, and produces a single source of truth for donation analysis across platforms.
+
+This model supports reporting on overall donation activity, donor behavior, and recurring giving.
+*/
+
 {%- set schema_pattern = 'dbt_%' -%}
 {%- set precore_table_name = 'precore_shopify__orders_v2' -%}
 {%- set shopify_tables = get_precore_tables(schema_pattern, precore_table_name, schema_exclude=['dbt_precore'], model_exclude=['precore_shopify__orders_v1']) -%}
@@ -124,6 +132,7 @@ WITH
     ),
 
     unioned AS (
+    -- Combine ActBlue and Shopify donations after aligning both sources to the same schema
         SELECT * FROM actblue
         UNION ALL
         SELECT * FROM shopify

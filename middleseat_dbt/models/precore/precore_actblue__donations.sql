@@ -1,3 +1,7 @@
+/*
+
+*/
+
 {{
     config(
         dist='wdl_transaction_id',

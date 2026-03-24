@@ -87,7 +87,7 @@ SELECT
             ELSE sources.source_type
         END AS source_type,
     CASE WHEN finance_exclusions.order_number IS NOT NULL THEN 'Finance'
-    --Finance exclusions take priority; otherwise infer the source using the macro based on existing source_type, refcode, and form_name.
+     -- Use the mapped source_type when available unless the donation is flagged as Finance.
             ELSE {{ likely_source_type('sources.source_type', 'donations.refcode', 'donations.form_name') }}
         END AS likely_source_type,
     donations.refcode,
